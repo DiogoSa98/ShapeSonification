@@ -33,10 +33,9 @@ public class SupershapeSound : SoundShapeFunction
             
         gielisMaxRadius = 0.0f;
             
-        float angularStep = 2 * Mathf.PI / numberOfSamples; // ANGULAR FREQUENCY??  angle should be angularFrequency * i???
         for (int i = 0; i < numberOfSamples; i++) 
         {
-            float angle = i * angularStep;
+            float angle = (float)angularFrequency * i;
             gielisAmplitude.Add(GenerateGielisSample(angle)); 
         }
 
@@ -57,12 +56,12 @@ public class SupershapeSound : SoundShapeFunction
     private float GenerateGielisSample(float angle)
     {
         // FIXME set gielis formula parameters here cause serialization not working
-        m = 4.0f;
+        m = 6.0f;
         a = 1.0f;
         b = 1.0f;
         n1 = 1.0f;
-        n2 = 3.0f;
-        n3 = 1.4f;
+        n2 = 8.0f;
+        n3 = 4.0f;
 
         // do the gielis calculation
         float radius = GielisFormula(angle);
