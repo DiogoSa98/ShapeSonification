@@ -43,7 +43,7 @@ public class ProceduralSoundGenerator : MonoBehaviour
         //AudioSettings.Reset(configuration);
 
         //numberOfSamples = AudioSettings.GetDSPBufferSize(); // 1024 FIXME, confirm
-        numberOfSamples = 1024;
+        //numberOfSamples = 1024;
 
         currentSampleIndex = 0;
 
@@ -56,6 +56,8 @@ public class ProceduralSoundGenerator : MonoBehaviour
         angularFrequency = 2 * Mathf.PI * frequency / sampleRate;
 
         soundSamplesBufferTemp = new List<float>();
+
+        numberOfSamples = (int)(sampleRate / frequency);
 
         soundSamplesBufferCurrent = soundShapeFunction.GenerateSamples(numberOfSamples, angularFrequency);
 
@@ -72,6 +74,8 @@ public class ProceduralSoundGenerator : MonoBehaviour
             {
                 frequency = newFrequency;
                 angularFrequency = 2 * Mathf.PI * frequency / sampleRate;
+                numberOfSamples = (int)(sampleRate / frequency);
+                Debug.Log("numberofsamples" + numberOfSamples);
             }
 
             soundSamplesBufferTemp = soundShapeFunction.GenerateSamples(numberOfSamples, angularFrequency);
@@ -84,31 +88,62 @@ public class ProceduralSoundGenerator : MonoBehaviour
         if (!running)
             return;
 
+
+
         int dataLen = data.Length / channels;
         numberOfSamples = dataLen;
+        
+        int dataIndex = 0;
 
-        currentSampleIndex = 0;
-        while (currentSampleIndex < dataLen)
+        //currentSampleIndex = 0;
+        //while (currentSampleIndex < dataLen)
+        //{
+        //    if (CanSwapSamplesBuffer())
+        //        SwapSamplesBuffer();
+
+        //    int channelXid = currentSampleIndex * channels;
+        //    int channelYid = currentSampleIndex * channels + 1;
+
+        //    // populate the two channels
+        //    data[channelXid] = soundSamplesBufferCurrent[channelXid];
+        //    data[channelYid] = soundSamplesBufferCurrent[channelYid];
+
+        //    phase += angularFrequency; // probably should use modulo to keep track of phase
+        //    currentSampleIndex++;
+        //}
+        while (dataIndex < dataLen)
         {
             if (CanSwapSamplesBuffer())
                 SwapSamplesBuffer();
 
-            int channelXid = currentSampleIndex * channels;
-            int channelYid = currentSampleIndex * channels + 1;
+            int channelXid = dataIndex;
+            int channelYid = dataIndex + 1;
 
             // populate the two channels
-            data[channelXid] = soundSamplesBufferCurrent[channelXid];
-            data[channelYid] = soundSamplesBufferCurrent[channelYid];
+            data[channelXid] = soundSamplesBufferCurrent[currentSampleIndex];
+            data[channelYid] = soundSamplesBufferCurrent[currentSampleIndex + 1];
+            //Debug.Log("currentSampleIndex" + currentSampleIndex);
+            //phase += angularFrequency; // probably should use modulo to keep track of phase
 
-            phase += angularFrequency; // probably should use modulo to keep track of phase
-            currentSampleIndex++;
+            currentSampleIndex += channels;
+            currentSampleIndex %= soundSamplesBufferCurrent.Count;
+
+            dataIndex += channels;
         }
+
+        //Debug.Log(" samples size:" +  soundSamplesBufferCurrent.Count);
+
     }
 
     // swap sample buffers only if new buffer is ready and we have finished reproducing all samples from the previous buffer
     private bool CanSwapSamplesBuffer()
     {
-        return newSampleBufferData && (currentSampleIndex == (numberOfSamples - 1));
+        if (newSampleBufferData && (currentSampleIndex == (soundSamplesBufferCurrent.Count - 2)) ) 
+        {
+            currentSampleIndex = 0;
+            return true;
+        }
+        return false;
     }
 
     private void SwapSamplesBuffer()

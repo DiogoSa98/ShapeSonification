@@ -17,44 +17,44 @@ public class SoundVisualizerController : MonoBehaviour
 
     private void Start()
     {
-        material = GetComponent<Renderer>().material;
-        soundGenerator = GetComponent<ProceduralSoundGenerator>();
+        //material = GetComponent<Renderer>().material;
+        //soundGenerator = GetComponent<ProceduralSoundGenerator>();
     }
 
     void SetupAndStartVisualizer()
     {
-        InitializeBuffers();
-        material.SetBuffer("soundSamplesBuffer", soundSamplesBuffer);
-        material.SetInt("totalSoundSamples", soundGenerator.soundSamplesBufferCurrent.Count); 
+        //InitializeBuffers();
+        //material.SetBuffer("soundSamplesBuffer", soundSamplesBuffer);
+        //material.SetInt("totalSoundSamples", soundGenerator.soundSamplesBufferCurrent.Count); 
     }
 
 
     void InitializeBuffers()
     {
-        soundSamplesBuffer = new ComputeBuffer(soundGenerator.soundSamplesBufferCurrent.Count, sizeof(float));
-        soundSamplesBuffer.SetData(soundGenerator.soundSamplesBufferCurrent);
+        //soundSamplesBuffer = new ComputeBuffer(soundGenerator.soundSamplesBufferCurrent.Count, sizeof(float));
+        //soundSamplesBuffer.SetData(soundGenerator.soundSamplesBufferCurrent);
     }
 
     void Update()
     {
         //TestSpectrumVisualizer();
 
-        if (!started)
-        {
-            started = true;
-            SetupAndStartVisualizer();
-        }
-
-        //if (soundGenerator.changedNumberOfSamplesOrChannels) //  size of buffer change won't happen atm
+        //if (!started)
         //{
-        //    DisposeBuffers();
-        //    InitializeBuffers();
+        //    started = true;
+        //    SetupAndStartVisualizer();
         //}
 
-        if (soundGenerator.newSampleBufferData)
-        {
-            soundSamplesBuffer.SetData(soundGenerator.soundSamplesBufferCurrent);
-        }
+        ////if (soundGenerator.changedNumberOfSamplesOrChannels) //  size of buffer change won't happen atm
+        ////{
+        ////    DisposeBuffers();
+        ////    InitializeBuffers();
+        ////}
+
+        //if (soundGenerator.newSampleBufferData)
+        //{
+        //    soundSamplesBuffer.SetData(soundGenerator.soundSamplesBufferCurrent);
+        //}
     }
 
 
